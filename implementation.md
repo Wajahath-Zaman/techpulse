@@ -305,7 +305,7 @@ Tableau Dashboard
     ```
 - Now we will design the ERD. 
 
-![Project Architecture](docs/images/image_b860f004.png)
+![Project Architecture](docs/images/techpulse_ERD.png)
 
 - We can add two more tables to the database for better debugging. The two tables are --> 
 1. scrape_jobs --> To understand where the job failed.
@@ -313,7 +313,8 @@ Tableau Dashboard
 
 ### Phase III - Database Architect Design.
 
-- I created two sql scripts.
+- We will proceed in steps from here:
+1. I created two sql scripts.
     1. 01_create_database.sql
     2. 02_create_tables.sql
 
@@ -328,4 +329,85 @@ CREATE DATABASE techpulse;
 USE techpulse;
 ```
 
-- Now i gave the second commit of the project.
+- Now i gave the second commit of the project. Creation of the database.
+
+2.  We must decide the Data Architecture at this point. We ask :
+> 'Where does every peice of data belong ?'.
+- Now for this instead of thinking in tables we will think this in layers:
+    1. Bronze Layer :
+    - This layer contains the content exactly as we scraped it.
+    - Even if there are any inconsistencies in the data.
+    2. Silver Layer :
+    - This layer will contain the clean and standardized data.
+    - This is what most analysts will use.
+    3. Gold Layer :
+    - This layer stores business-ready analytics.
+    1. Daily Article Counts
+    2. Company mention Counts
+    3. Technology trends etc....
+    - This is optimized for dashboards and reporting only.
+3. If we map tables according to the layer method we have:
+    1. Bronze Layer :
+    - bronze_articles
+    - bronze_scrape_logs
+
+    2. Silver Layer :
+    - articles
+    - article_versions
+    - authors
+    - sources
+    - categories
+    - companies
+    - technologies
+    - tags
+
+    - article_authors
+    - article_companies
+    - article_technologies
+    - article_tags
+
+    3. Gold Layer :
+    - daily_article_metrics
+    - company_trends
+    - technology_trends
+    - source_metrics
+    - category_metrics
+
+4. Define the ETL Flow :
+    Website
+
+      ↓
+
+    Bronze
+
+      ↓
+
+    Cleaning
+
+      ↓
+
+    Silver
+
+      ↓
+
+    Aggregation
+
+      ↓
+
+    Gold
+
+      ↓
+
+    Tableau
+
+5. Create the ERD:
+- This is already created above.
+![Project Architecture](docs/images/techpulse_ERD.png)
+
+6. Creation of necessary documents:
+- We created the docs and named in numerical order. This demonstrated the procedure:
+1. 01_business_requirements.md --> Defines the database architecture, schema, relationships, and data flow for TechPulse.
+2. 02_system_architecture.md --> Defines TechPulse's system architecture, data flow, components, and technology stack.
+3. 03_database_design_specification.md -->  Defines the TechPulse database architecture, schema, relationships, and design principles.
+
+### Phase IV - Database implementation.
