@@ -966,3 +966,98 @@ SELECT * FROM vw_article_details;
 
 
 ### Phase V - Web Scraper Development.
+
+- Created the directory structure as:
+```text
+TECHPULSE
+│
+├── config
+│
+├── data
+│   ├── raw
+│   ├── processed
+│   └── exports
+│
+├── database
+│
+├── dashboard
+│
+├── docs
+│
+├── logs
+│
+├── notebooks
+│
+├── reports
+│
+├── src
+│   │
+│   ├── analysis
+│   │
+│   ├── etl
+│   │
+│   ├── scrapers
+│   │   │
+│   │   ├── common
+│   │   │   ├── base_scraper.py
+│   │   │   ├── rss_scraper.py
+│   │   │   ├── html_parser.py
+│   │   │   ├── database.py
+│   │   │   ├── logger.py
+│   │   │   └── helpers.py
+│   │   │
+│   │   ├── sources
+│   │   │   ├── techcrunch.py
+│   │   │   ├── theverge.py
+│   │   │   ├── venturebeat.py
+│   │   │   └── arstechnica.py
+│   │   │
+│   │   └── scraper_runner.py
+│   │
+│   └── tests
+│
+├── implementation.md
+├── main.py
+├── README.md
+├── requirements.txt
+└── LICENSE
+```
+
+- We created a article.py file which holds the article class to store the scraped data in a particular order. This is helpful when we scrape data from different sources and the data is scraped in different formats that usual.
+- Every scraper should follow the same pipeline :
+    ```text
+    Website
+        │
+        ▼
+    Download HTML
+        │
+        ▼
+    Extract Information
+        │
+        ▼
+    Create Article Object
+        │
+        ▼
+    Return Article
+        │
+        ▼
+    Database Loader
+    ```
+
+- The framework which we will use is this:
+    ```text
+                        Scraper Runner
+                            │
+            ┌───────────────┼───────────────┐
+            ▼                               ▼
+        TechCrunch Scraper             The Verge Scraper
+            │                               │
+            └───────────────┬───────────────┘
+                            ▼
+                    Base Scraper
+                            │
+            ┌───────────────┼───────────────┐
+            ▼               ▼               ▼
+        HTTP Client     RSS Parser     HTML Parser
+    ```
+- 

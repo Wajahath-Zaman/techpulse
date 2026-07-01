@@ -179,31 +179,61 @@ TechPulse/
 
 ### 🔄 Phase IV – Database Implementation
 
-Currently in progress.
 
+The database layer has been fully designed and implemented using MySQL. The schema follows normalization principles and serves as the foundation for the entire analytics pipeline.
+
+#### Completed Tasks
+
+- Designed and implemented a normalized relational database.
+- Created all core entity tables.
+- Implemented bridge tables to resolve many-to-many relationships.
+- Added primary keys, foreign keys, and integrity constraints.
+- Created indexes to improve query performance.
+- Developed reusable SQL views for analytical queries.
+- Prepared seed data for testing and development.
+- Validated database relationships and schema integrity.
+
+#### Database Schema
+
+The database currently contains the following tables:
+
+##### Core Tables
+
+- Sources
+- Categories
+- Authors
+- Companies
+- Technologies
+- Tags
+- Articles
+- Scrape Logs
+
+##### Bridge Tables
+
+- Article Authors
+- Article Companies
+- Article Technologies
+- Article Tags
+
+#### Key Features
+
+- Fully normalized relational database (3NF)
+- Referential integrity using foreign keys
+- Optimized indexing strategy
+- Reusable SQL views
+- Many-to-many relationship modeling
+- Designed for scalable web scraping and analytics
+
+#### Current Project Status
+
+- ✅ Project Setup
+- ✅ Business Requirements
+- ✅ System Architecture
+- ✅ Database Design
+- ✅ Database Implementation
+- ⏳ Web Scraper Development (Next Phase)
 ---
 
-## Upcoming Phases
-
-- Database Implementation
-- Web Scraper Development
-- ETL Pipeline
-- SQL Analytics
-- Python Analysis & NLP
-- Tableau Dashboard
-- Automation
-- Deployment
-
----
-
-## Documentation
-
-- Business Requirements Document
-- System Architecture Document
-- Database Design Specification
-- Entity Relationship Diagram (ERD)
-
----
 
 ## Project Status
 
