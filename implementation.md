@@ -1060,4 +1060,647 @@ TECHPULSE
             ▼               ▼               ▼
         HTTP Client     RSS Parser     HTML Parser
     ```
-- 
+- Now, We will build a Base Scraper:
+    - We create src/scraper/common/base_scraper.py
+    - We use the code as below and i will explain everything in proper understanding:
+    ```python
+    import logging  # Use to print log messages
+    import time  # Used for keeping the scraper on hold before it retries
+    from abc import ABC # Abstract Base Class : Intend to be a parent Class
+    from typing import Optional # This is for times when something is not present
+
+    import requests # This is for requesting information from the websites
+    from requests import Response # This is used to store the recieved response
+    ```
+
+    ```python
+    class BaseScraper(ABC):
+    def __init__(self, timeout: int = 15, retries: int = 3, delay: int = 2):
+        self.timeout = timeout
+        self.retries = retries
+        self.delay = delay
+    ```
+    - We defined a BaseScraper class on which the other scrapers will be built on.
+    - The constructor function takes in 3 parameters.
+
+    ```python
+    self.headers = {
+            'User-Agent': (
+                "Mozilla/5.0 "
+                "(Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 "
+                "(KHTML, like Gecko) "
+                "Chrome/138.0 Safari/537.36"
+            )
+        }
+    ```
+    - This is used so that website doesnt think that we are using a scraper. It must rather think that we are requesting from a browser.
+
+    `self.logger = logging.getLogger(self.__class__.__name__)`
+    - This line used to print the current class's name in the log.
+
+    `def fetch(self, url: str) -> Optional[Response]:`
+    - We are defining the fetch function on which will request the website to issue the data. There can be a no response situation so we are using the OPTIONAL response technique.
+
+    ```python
+    for attempt in range(1, self.retries + 1):
+
+            try:
+
+                response = requests.get(url, headers=self.headers, timeout=self.timeout)
+
+                response.raise_for_status()
+
+                return response
+
+            except requests.RequestException as e:
+
+                self.logger.warning(
+                    f"Attempt {attempt} failed: {e}"
+                )
+
+                if attempt < self.retries:
+                    time.sleep(self.delay)
+    ```
+    - We are using a for loop for 3 times so that we make 3 attempts to fetch the data.
+    - 'raise_for_status' this is used for the cases when the response is like and error which is like 404 or 500. This raises an exception at that moment.
+    - If everything is working, return the fetched response.
+    - For exceptions we are raising a warning in the logs.
+    - Then after the request is done we are checking if the attempt is less than the retries. If yes we are adding a delay of 3 seconds.
+
+    ```python
+        self.logger.error(f"Failed to fetch {url}")
+
+        return None
+    ```
+
+    - When all the attempts are completed and we still got nothing. Then we return nothing with an error in the log.
+
+    - We are building this to write efficient code. Rather than writing the code for seperate scrapers seperately, we just use this BaseScraper Class.
+
+- Now we will build, RSS Scraper:
+    ```python
+    import logging
+    from typing import List, Dict
+
+    import feedparser
+    ```
+    - Logging for logger and typing to convert the recieved data into List of dictionaries and feedparser is used to parse the XML based RSS feeds in easy to use python objects.
+    
+    ```python
+    class RSSScraper:
+    def __init__(self):
+        self.logger = logging.getLogger(
+            self.__class__.__name__
+        )
+    ```
+    - We created the RSSScraper class which will be used as a blueprint for different RSS feed sources.
+
+    ```python
+    def parse_feed(self, rss_url : str) -> List[Dict]:
+        feed = feedparser.parse(rss_url)
+
+        articles = []
+
+        if feed.bozo:
+
+            self.logger.warning(
+                "RSS Feed contains parsing error."
+            )
+
+        for entry in feed.entries:
+
+            articles.append({
+                "title": entry.get("title"),
+
+                "url": entry.get("link"),
+
+                "published": entry.get('published'),
+
+                "summary": entry.get('summary')
+            })
+
+        return articles
+    ```
+    - We define a function used to get and parse the feed from RSS. We created an empty list in which we will store the articles. This list will be holding dictionaries. 
+    - 'feed' object will hold all the articles as entries from the response. 
+    - Then for each feed we take the necessary elements and store it in 'articles' list.
+    - Now all the sources that we will use for RSS scraper will be done using this class.
+    ```python
+    rss = RSSScraper()
+
+    articles = rss.parse_feed(
+        "https://techcrunch.com/feed/"
+    )
+
+    print(len(articles))
+
+    print(articles[0])
+    ```
+    - We are not creating a dataclass just yet as we dont have enough information to build our Article Dataclass. This information just says "Here is something, here is where to find it."
+    - We will use the html parser to get the actual article data from each html page.
+
+#### Plan had some changes.
+
+- We have removed the sources folder. And created seperate packages for different sources. As they will have different formats we will use different scrapers for each of the source. Those scrapers will be built on top of **baseScraper class**. The rss.py will fetch the list of articles and return us the details for each article including the urls. Then we will use the scrapers to fetch each url's html and then parse to and append it into a list. Then we will use the scraper_runner.py file to accumulate all the data from different sources into one place.
+
+- Now we will change the rss.py code:
+    ```python
+    import logging
+    from typing import List
+
+    import feedparser
+
+    logger = logging.getLogger(__name__)
+
+    def get_article_urls(rss_url: str) -> List[str]:
+        
+        feed = feedparser.parse(rss_url)
+
+        if feed.bozo:
+            logger.warning(
+                "RSS feed contains parsing errors: %s",
+                getattr(feed, "bozo_exception", "Unknown error")
+            )
+
+        article_urls = []
+        seen_urls = []
+
+        for entry in feed.entries:
+            url = entry.get("link")
+
+            if not url:
+                continue
+
+            if url in seen_urls:
+                continue
+
+            seen_urls.add(url)
+            article_urls.append(url)
+
+        logger.info(
+            "Discovered %d articles URLs from RSS feed.", 
+            len(article_urls)
+        )
+
+        return article_urls
+    ```
+
+- Later we will use it like :
+```python
+from scrapers.common.rss import get_article_urls
+
+rss_url = "https://techcrunch.com/feed/"
+
+article_urls = get_article_urls(rss_url)
+
+for url in article_urls:
+    # Download HTML
+    # Pass HTML to parser
+    # Create Article object
+    pass
+```
+
+- Now we will create our first scrapper.
+    - Before we begin writing the code, we will take a live TechCrunch article and understand the exact HTML selectors for each field.
+    - We created a common python file called as article_enricher.py which is responsible for deriving information that does not exist in the HTML. This module take the parsed article object and enrich it with calculated fields before it is stored in the database.
+    - All of the helper functions are in the helpers.py file which are used by the article_enricher.py file.
+    - Final Pipeline as of now Looks like this :
+    ```python
+    RSS Feed
+      │
+      ▼
+    get_article_urls()
+        │
+        ▼
+    TechCrunchScraper
+        │
+        ▼
+    Download HTML
+        │
+        ▼
+    TechCrunchParser
+        │
+        ▼
+    Article
+        │
+        ▼
+    ArticleEnricher
+        │
+        ▼
+    DatabaseLoader
+        │
+        ▼
+    MySQL
+    ```
+
+- Writing helpers.py functions: So that every future scraper will benefit from it. Basically `helpers.py` is a library of pure utility functions in which each function take an input, return an output and have no side effects. 
+- Initially we will implement only 5 functions:
+1. clean text
+2. calculate word count
+3. calculate reading time
+4. generate_content_hash
+5. parse_datetime
+- `helpers.py` file will have the code:
+```python
+import hashlib
+import math
+import re
+from datetime import datetime
+from typing import Optional
+
+
+def clean_text(text: Optional[str]) -> str:
+    """
+    Clean and normalize text by removing extra whitespace.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Cleaned text.
+    """
+    if not text:
+        return ""
+
+    # Replace multiple whitespace characters with a single space
+    text = re.sub(r"\s+", " ", text)
+
+    return text.strip()
+
+
+def calculate_word_count(text: str) -> int:
+    """
+    Calculate the number of words in a text.
+
+    Args:
+        text: Input text.
+
+    Returns:
+        Word count.
+    """
+    if not text:
+        return 0
+
+    return len(text.split())
+
+
+def calculate_reading_time(
+    word_count: int,
+    words_per_minute: int = 200
+) -> int:
+    """
+    Estimate reading time in minutes.
+
+    Args:
+        word_count: Total number of words.
+        words_per_minute: Average reading speed.
+
+    Returns:
+        Estimated reading time in minutes.
+    """
+    if word_count <= 0:
+        return 0
+
+    return math.ceil(word_count / words_per_minute)
+
+
+def generate_content_hash(text: str) -> str:
+    """
+    Generate a SHA-256 hash for article content.
+
+    Args:
+        text: Article content.
+
+    Returns:
+        SHA-256 hash string.
+    """
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def parse_datetime(datetime_str: Optional[str]) -> Optional[datetime]:
+    """
+    Parse an ISO-8601 datetime string into a datetime object.
+
+    Args:
+        datetime_str: Datetime string.
+
+    Returns:
+        datetime object if parsing succeeds, otherwise None.
+    """
+    if not datetime_str:
+        return None
+
+    try:
+        return datetime.fromisoformat(datetime_str)
+    except ValueError:
+        return None
+```
+
+- To use this functions we will create the article_enrichers for derived content as code:
+```python
+from .article import Article
+from .helpers import (
+    clean_text,
+    calculate_reading_time,
+    calculate_word_count,
+    generate_content_hash
+)
+
+
+class ArticleEnricher:
+    '''
+    Enriches an Article Object by calculating derived field.
+
+    Responsibilities:
+        - Clean Article text
+        - Calculate word count
+        - Estimate reading time
+        - Generate content hash
+    '''
+
+    def enrich(self, article: Article) -> Article:
+        '''
+        Enriches an article with calculated metadata.
+
+        Args:
+            article: Parsed Article Object.
+
+        Returns:
+            Enriched Article Object.
+        '''
+
+        # Calculate derived fields
+        article.word_count = calculate_word_count(article.content)
+
+        article.reading_time = calculate_reading_time(
+            article.word_count
+        )
+
+        article.content_hash = generate_content_hash(
+            article.content
+        )
+
+        return article
+```
+- This takes the article as input add the derived fields using the helper functions and return the modified article in universal format.
+
+#### Implementation of first END to END pipeline of data scraping.
+
+```text
+RSS Feed
+    │
+    ▼
+get_article_urls()
+    │
+    ▼
+TechCrunchScraper
+    │
+    ▼
+Download HTML
+    │
+    ▼
+TechCrunchParser
+    │
+    ▼
+Article
+    │
+    ▼
+ArticleEnricher
+    │
+    ▼
+Database Loader
+```
+
+- Creating the techcrunch/parser.py
+    - The responsibility is just to convert the TechCrunch HTML page into an Article Object. That's it.
+    - Tehe parser also uses the helper fuctions from the helpers.py to add some derived fields as well into the article as we require in the database.
+
+- We now create the scraper for techcruch which will use the baseScraper as its parent class.
+- The implementation looks like this:
+    ```python
+    from bs4 import BeautifulSoup
+
+    from scrapers.common.article import Article
+    from scrapers.common.article_enricher import ArticleEnricher
+    from scrapers.common.base_scraper import BaseScraper
+    from scrapers.common.rss import get_article_urls
+
+    from .parser import TechCrunchParser
+
+    ```
+    - These are all the things that we created before this and we will use these in the scraper.
+
+    ```python
+    class TechCrunchScraper(BaseScraper):
+    """
+    Scraper responsible for collecting and parsing
+    TechCrunch articles.
+    """
+
+    RSS_URL = "https://techcrunch.com/feed/"
+
+    def __init__(self):
+        super().__init__()
+
+        self.parser = TechCrunchParser()
+        self.enricher = ArticleEnricher()
+    ```
+    - We are creating the class for TechCrunchScraper which take the BaseScraper as its parent class.
+    - We have hard coded the RSS_URL because there is no need of dynamics.
+    
+    ```python
+       def scrape(self) -> list[Article]:
+        """
+        Scrape all articles from the TechCrunch RSS feed.
+
+        Returns:
+            List of enriched Article objects.
+        """
+
+        articles = []
+
+        article_urls = get_article_urls(self.RSS_URL)
+
+        self.logger.info(
+            "Found %d article URLs.",
+            len(article_urls)
+        )
+
+        for url in article_urls:
+
+            response = self.fetch(url)
+
+            if response is None:
+                continue
+
+            soup = BeautifulSoup(
+                response.text,
+                "html.parser"
+            )
+
+            try:
+
+                article = self.parser.parse(
+                    soup=soup,
+                    article_url=url
+                )
+
+                article = self.enricher.enrich(article)
+
+                articles.append(article)
+
+            except Exception as e:
+
+                self.logger.exception(
+                    "Failed to parse article %s : %s",
+                    url,
+                    e
+                )
+    ```
+    - We are first getting the list of articles using the get_article_urls.
+    - Then we add a logging statement
+    - Then for each url in the list of article_urls found we will fetch the html using fetch method.
+    - If response is not there we just continue and then we are converting the html into a BeautifulSoup object which the parser understands.
+    - Then we are parsing that BeautifulSoup Object using our parser for techcrunch
+    - After parsing it we are enriching using our enricher. 
+    
+    ```python
+    self.logger.info("Successfully scraped %d articles.", len(articles))
+
+        return articles
+    ```
+    - Upon successful completion of the code we return the articles list.
+    - This is our Scraper.
+- The workflow looks like this:
+```text
+RSS Utility
+      │
+      ▼
+Discovers article URLs
+      │
+      ▼
+BaseScraper
+      │
+      ▼
+Downloads HTML
+      │
+      ▼
+BeautifulSoup
+      │
+      ▼
+TechCrunchParser
+      │
+      ▼
+Creates Article
+      │
+      ▼
+ArticleEnricher
+      │
+      ▼
+Adds derived fields
+      │
+      ▼
+List[Article]
+```
+
+- **Each component in our setup has exactly one job in the entire process.**
+
+- Before implementing the database.py we will first test it using a small script.
+- The test file was written as:
+```python
+
+
+from scrapers.techcrunch.scraper import TechCrunchScraper
+
+def main():
+    scraper = TechCrunchScraper()
+
+    articles = scraper.scrape()
+
+    if len(articles) <=0:
+        print("No articles scraped.")
+
+    print(f"Successfully scraped {len(articles)} articles. \n")
+
+    if articles:
+        article = articles[0]
+
+        print("=" * 80)
+        print(f"Title          : {article.title}")
+        print(f"Author(s)      : {article.authors}")
+        print(f"Category       : {article.category}")
+        print(f"Published At   : {article.published_at}")
+        print(f"Word Count     : {article.word_count}")
+        print(f"Reading Time   : {article.reading_time} min")
+        print(f"Tags           : {article.tags}")
+        print(f"Content Hash   : {article.content_hash}")
+        print("\nSummary:")
+        print(article.summary)
+        print("\nContent Preview:")
+        print(article.content[:500])
+        print("=" * 80)
+
+
+if __name__ == '__main__':
+    main()
+```
+and the above code when run in the root folder of the project in terminal if returns:
+```text
+zama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ python -m tests.test_techcrunch_scraper
+2026-07-03 11:43:57,103 | INFO | TechCrunchScraper | Found 20 article urls
+2026-07-03 11:44:01,072 | INFO | TechCrunchScraper | Successfully scraped 20 articles.
+Successfully scraped 20 articles. 
+
+================================================================================
+Title          : Politician who investigated spyware abuses had his phone hacked with Pegasus spyware
+Author(s)      : ['Zack Whittaker']
+Category       : Security
+Published At   : 2026-07-02 22:05:00-07:00
+Word Count     : 0
+Reading Time   : 0 min
+Tags           : ['cybersecurity', 'Government & Policy', 'NSO Group', 'Pegasus', 'Security', 'Spyware']
+Content Hash   : e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+
+Summary:
+Security researchers have confirmed that a European politician had his phone hacked with the Pegasus spyware while serving on an investigatory committee probing abuses of the notorious surveillance tool. This has reigniting fresh controversy over governments abusing spyware to collect information about their critics.
+
+Content Preview:
+
+================================================================================
+(.venv) 
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ 
+```
+- This means our pipeline is running just fine. But there is an issue in the words_count and read_time. That shows us that the parser is not able to extract the content. That is why the _extract_content is returning none.
+- With little bit of debugging from the terminal we are found to be successful
+```text
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ python -m tests.test_techcrunch_scraper
+2026-07-03 12:04:52,909 | INFO | TechCrunchScraper | Found 20 article urls
+2026-07-03 12:04:56,784 | INFO | TechCrunchScraper | Successfully scraped 20 articles.
+Successfully scraped 20 articles. 
+
+================================================================================
+Title          : Politician who investigated spyware abuses had his phone hacked with Pegasus spyware
+Author(s)      : ['Zack Whittaker']
+Category       : Security
+Published At   : 2026-07-02 22:05:00-07:00
+Word Count     : 776
+Reading Time   : 4 min
+Tags           : ['cybersecurity', 'Government & Policy', 'NSO Group', 'Pegasus', 'Security', 'Spyware']
+Content Hash   : f28175d80816bf78a3d8395a5d5739f3901f7dcb1e8c08fa9a9898d8c8271ae9
+
+Summary:
+Security researchers have confirmed that a European politician had his phone hacked with the Pegasus spyware while serving on an investigatory committee probing abuses of the notorious surveillance tool. This has reigniting fresh controversy over governments abusing spyware to collect information about their critics.
+
+Content Preview:
+Security researchers have confirmed that a European politician had his phone hacked with the Pegasus spyware while serving on an investigatory committee probing abuses of the notorious surveillance tool. This has reigniting fresh controversy over governments abusing spyware to collect information about their critics.
+
+The researchers at the University of Toronto’s digital rights unit The Citizen Lab say the confirmed phone hacking of Greek journalist and former politician Stelios Kouloglou durin
+================================================================================
+(.venv) 
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ 
+```

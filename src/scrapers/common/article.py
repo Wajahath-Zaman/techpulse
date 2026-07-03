@@ -9,12 +9,15 @@ class Article:
     title : str
     summary : Optional[str]
     content : str
-    authors : List[str] = field(default_factory=List)
+    authors : List[str] = field(default_factory=list)
     category : Optional[str] = None
-    tags : List[str] = field(default_factory=List)
-    companies : Optional[str] = None
-    technologies : List[str] = field(default_factory=List)
+    tags : List[str] = field(default_factory=list)
+    companies : List[str] = field(default_factory=list)
+    technologies : List[str] = field(default_factory=list)
     published_at : Optional[datetime] = None
+    word_count : Optional[int] = None
+    reading_time : Optional[int] = None
+    content_hash : Optional[str] = None
     scraped_at : datetime = field(default_factory=datetime.utcnow)
 
 
