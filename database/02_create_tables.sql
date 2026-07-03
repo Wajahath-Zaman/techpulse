@@ -203,3 +203,26 @@ CREATE TABLE article_tags (
         ON UPDATE CASCADE
 );
 
+-- Creating the indexes
+
+-- Articles
+CREATE INDEX idx_articles_source
+ON articles(source_id);
+
+CREATE INDEX idx_articles_category
+ON articles(category_id);
+
+CREATE INDEX idx_articles_published_at
+ON articles(published_at);
+
+-- Authors
+CREATE INDEX idx_authors_source
+ON authors(source_id);
+
+-- Scrape Logs
+CREATE INDEX idx_scrape_logs_source
+ON scrape_logs(source_id);
+
+CREATE INDEX idx_scrape_logs_status
+ON scrape_logs(status);
+

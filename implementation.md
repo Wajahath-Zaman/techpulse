@@ -1704,3 +1704,22 @@ The researchers at the University of Toronto’s digital rights unit The Citizen
 mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
 $ 
 ```
+
+- Now we will design the database loader which is database.py .
+- We have created two files. .env for credentials of the database and .env_example for reference of how the contents of the database are.
+- .env file is filled with
+```python
+from dotenv import load_dotenv
+import os
+
+
+load_dotenv()
+
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = int(os.getenv("DB_PORT"))
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DF_USER")
+DF_PASSWORD = os.getenv("DB_PASSWORD")
+```
+
+
