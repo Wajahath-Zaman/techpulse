@@ -1704,6 +1704,10 @@ The researchers at the University of Toronto’s digital rights unit The Citizen
 mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
 $ 
 ```
+- Raw article looks like this:
+```
+Article(article_url='https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/', source_name='TechCrunch', title='Savi’s app aims to protect consumers from realistic AI scams like kidnappers demanding ransom', summary='Brothers Patrick and Ryan Coughlin, each with impressive careers in the tech industry (Patrick worked in national cyber defense, and at Splunk and Cisco; and Ryan with consumer products at Apple and Spotify), have launched a new kind of security startup.', content='Brothers Patrick and Ryan Coughlin, each with impressive careers in the tech industry (Patrick worked in national cyber defense, and at Splunk and Cisco; and Ryan with consumer products at Apple and Spotify), have launched a new kind of security startup.\n\nSavi Security seeks to protect everyday folks from the new crop of incredibly convincing AI-generated scams, whether they’re routed via text, emails or phone calls.\n\nThe company just raised $7 million in seed funding, and is launching its app for iPhone and Android on Tuesday. The round was led by Acrew Capital, with participation from Magnify Ventures, TTCER, and Resolute Ventures.\n\nThe inspiration for the company came from a horrifying incident involving the founders’ mother.\n\nAbout two years ago, Patrick Coughlin’s mom called him, distraught, saying she had just received a phone call from a man saying he had kidnapped Coughlin’s sister. He was senior vice president of security products at Cisco at the time. (He landed there after Splunk bought his cloud security startup TruSTAR for a reported $82 million in May 2021. In 2024, Cisco bought Splunk.)\n\nHer mobile phone rang with the caller ID of her daughter, Coughlin recounted. During that call, “she thinks she hears my sister’s voice saying, ‘Mom, they’ve got me.’ There’s a blood-curdling scream, and then my sister says, ‘You’ve got to do what they tell you.’ And then a man comes on the phone and says, ‘If you don’t pay us $1,200 right now, we’re going to kill your daughter in the parking lot of the local Walmart,’” he continued.\n\nThe scammer had accurately spoofed Coughlin’s sister’s number, her voice, and referenced the location of the Walmart she frequented.\n\nFortunately, the mom kept her wits, called the daughter, and discovered that she was fine. The kidnapping was an AI-generated scam.\n\nCoughlin, like his mom, was shaken.\n\n“What I was thinking, after calming my mom down is: What has fundamentally changed in the underlying cybercriminal economy that we are now able to lever the same kind of sophistication that I had seen pointed at government agencies, and then later at Fortune 500 companies? And now we’re deploying that sophistication at the consumer?”\n\nThe answer is, of course, cheap and powerful LLMs and other generative AI tools.\n\nBefore AI, pursuing such grifts on consumers was not financially worth it. It would require in-depth research on the target, tech to spoof voices, and so on. Such attacks were primarily aimed only at deep pockets, like enterprises or governments, as was the tech to defend against them.\n\n“There’s something that’s happening right now to consumers with AI in the hands of cyber criminals,” Coughlin says. The costs to perpetrate such swindles have become negligible, and the research material, easily available.\n\n“You can clone a voice off three seconds of audio, off a publicly available social media post. So we’ve all got these traces of stuff that’s out there in the ether — like where we’re talking or narrating; commenting on a kid’s football game while videotaping it, and putting it on Facebook.”\n\nThe FTC said last month that people reporting online crimes collectively lost $3.5 billion to imposter scams in 2025, triple the amount in 2020. While the majority of people reporting such scams are older Americans, some research implies Gen Z is also highly susceptible. Research from 2025 by Malwarebytes, a maker of antivirus and anti-malware tools, reported that Gen Z was targeted more often with text scams than other generations, and fell for them about 25% of the time.\n\nThe Coughlin brothers’ idea was to develop a real-time intervention tool.\n\nThey tested their idea, and the AI scam detection model they were building, by launching a free website called Scam Wise . It is anonymous, no registration required. Just upload any suspicious texts, photos or emails, and Scam Wise will determine if it’s likely to be bogus.\n\n“We launched that about four months ago. We’ve had 50,000 submissions, and it grows now every week by about 10,000 submissions or more,” Coughlin said.\n\nScam Wise proved a source of in-the-wild data to help train Savi’s scam-detection AI model. The startup is currently mostly using Google’s Gemini, but has built its software on an AI gateway, which allows it to tap other AI models as needed, like voice detection-specific options.\n\nOn Tuesday, Savi launched a paid product, an iOS and Android app for consumers, that can screen texts, voicemails and incoming calls for scams.\n\nSuch features are available in a lot of different products (such as Malwarebytes), but Savi’s most impressive feature is live call monitoring.\n\nDuring a suspicious phone conversation, a user can opt to add the app’s live agent as a listener. Savi listens for behavioral tells that can identify if the situation is a grift while the call is in progress.\n\nSavi’s fees are also a bit unusual. It charges $8/month, discounted to $63/year, to cover an entire family, and puts no cap on the number of users. So one plan can cover a person’s kids, spouse, parents, and that uncle who always seems to need tech support. Or whoever else that the primary account holder wants to add and provide administrative support to.\n\nAI has changed the conditions for “how accessible being a fraudster is,” Coughlin said. “We’re creating fraudsters because we’re bringing down the barrier of deceiving people. So not only do we have the organized criminals and the syndicates behind this, but everyday people are sort of being tempted into playing fraud.”\n\nSavi Security’s answer is like a new generation of anti-virus-like software: one that uses AI in real time just like the bad guys do.', authors=['Julie Bort'], category='AI', tags=['AI', 'AI scams', 'fraud detection', 'Savi', 'Security', 'Startups'], companies=[], technologies=[], published_at=datetime.datetime(2026, 7, 7, 5, 0, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=61200))), word_count=937, reading_time=5, content_hash='632a3f3d2f2c423ea3f0e3f6c1d2dd0b2f8b8af76af8068165f62e395d8639ef', scraped_at=datetime.datetime(2026, 7, 7, 12, 21, 15, 99423))
+```
 
 - Now we will design the database loader which is database.py .
 - We have created two files. .env for credentials of the database and .env_example for reference of how the contents of the database are.
@@ -1722,4 +1726,222 @@ DB_USER = os.getenv("DF_USER")
 DF_PASSWORD = os.getenv("DB_PASSWORD")
 ```
 
+- Now we created a settings.py in config folder:
+```python
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+DB_HOST = os.getenv("DB_HOST")
+DB_PORT = int(os.getenv("DB_PORT"))
+DB_NAME = os.getenv("DB_NAME")
+DB_USER = os.getenv("DB_USER")
+DB_PASSWORD = os.getenv("DB_PASSWORD")
+```
+
+- Then we implemented the database connection file:
+```python
+import mysql.connector
+
+from config.settings import (
+    DB_HOST,
+    DB_PORT,
+    DB_NAME,
+    DB_USER,
+    DB_PASSWORD,
+)
+
+
+class Database:
+    def __init__(self):
+        self.connection = None
+        self.cursor = None
+
+    def connect(self):
+        self.connection = mysql.connector.connect(
+            host=DB_HOST,
+            port=DB_PORT,
+            database=DB_NAME,
+            user=DB_USER,
+            password=DB_PASSWORD,
+        )
+
+        self.cursor = self.connection.cursor()
+
+    def get_cursor(self):
+        return self.cursor
+
+    def commit(self):
+        self.connection.commit()
+
+    def rollback(self):
+        self.connection.rollback()
+
+    def close(self):
+        if self.cursor:
+            self.cursor.close()
+
+        if self.connection and self.connection.is_connected():
+            self.connection.close()
+
+    def is_connected(self):
+        return (
+            self.connection is not None
+            and self.connection.is_connected()
+        )
+```
+
+- Then to test it we created tests/test_database_connection.py
+```python
+from src.common.database import Database
+
+
+def main():
+    db = Database()
+
+    try:
+        db.connect()
+
+        print("Database connected successfully.")
+
+        cursor = db.get_cursor()
+        cursor.execute("SELECT 1")
+
+        print(cursor.fetchone())
+
+    finally:
+        db.close()
+        print("Connection closed.")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+- Then we ran the file using the command `python -m tests.test_database_connection.py` and it returned the text as 
+```text
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ python -m tests.test_database_connection
+Database connected Successfully.
+(1,)
+Connection Closed.
+(.venv) 
+```
+
+- Now we will create the **Database loader**.
+    - The only responsibility of a database loader is to load a fetch article and load it into the relational database in MySQL and also it must load different relational entities into different tables along with relations.
+    - The data flow looks like this:
+    ```text
+    Receive Article
+        │
+        ▼
+    Article Exists?
+        │
+        ├── Yes → Return
+        │
+        ▼
+    Get/Create Source
+        │
+        ▼
+    Get/Create Category
+        │
+        ▼
+    Get/Create Author(s)
+        │
+        ▼
+    Insert Article    
+        │
+        ▼
+    Get/Create Companies
+        │
+        ▼
+    Insert Article Companies
+        │
+        ▼
+    Get/Create Technologies
+        │
+        ▼
+    Insert Article Technologies
+        │
+        ▼
+    Get/Create Tags
+        │
+        ▼
+    Insert Article Tags
+        │
+        ▼
+    Insert Article Authors
+        │
+        ▼
+    Commit
+    ```
+
+    - There must be only one API method which is:
+    loader.load_articles(articles)
+    - Now the internal methods will be like:
+    ```text
+    DatabaseLoader
+    │
+    ├── load_articles()
+    │
+    ├── _load_single_article()
+    │
+    ├── _article_exists()
+    │
+    │
+    ├── _insert_article()
+    │
+    │
+    ├── _get_or_create_source()
+    ├── _get_or_create_author()
+    ├── _get_or_create_category()
+    ├── _get_or_create_company()
+    ├── _get_or_create_technology()
+    ├── _get_or_create_tag()
+    │
+    ├── _insert_article_authors()
+    ├── _insert_article_companies()
+    ├── _insert_article_technologies()
+    ├── _insert_article_tags()
+    │
+    └── _get_or_create()
+    ```
+    - Each method has one single responsibility.
+    - We will use all the hidden individual methods inside a master public method to get this done nicely.
+    - Inside load articles: The flow is like:
+    ```text
+    for article in articles
+        try
+            _load_single_article
+        except
+            log error
+    ```
+
+    - Inside the _load_single_article, the flow will be like:
+    ```text
+    if _article_already_exists:
+        return
+    else:
+        source_id
+        author_id
+        insert article
+        insert categories
+        insert companies
+        insert technologies
+        insert tags 
+        commit
+    ```
+
+    - Inside the _insert_article method, it must only do:
+    ```text
+    recieve article, source_id, author_id and insert it into the articles table and return the article_id
+    ```
+    - Same thing happens in different insert methods. 
+    - Instead of one bridge_table for all we must implement different bridge tables for all the realtionships as they have different set of parameters and different tables to look into. It is better for code readability
+
+    - Transactions: Instead of commiting every step we must commit only once per article at the end of the process. This maintains the database consistency. If an error occurs midway we can rollback.
+    - Code:
+    ```python
+
+    ```

@@ -46,7 +46,7 @@ CREATE TABLE authors (
 
 CREATE TABLE companies (
 	company_id INT PRIMARY KEY AUTO_INCREMENT,
-    company_name VARCHAR(150),
+    company_name VARCHAR(150) UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -55,7 +55,7 @@ CREATE TABLE companies (
 
 CREATE TABLE technologies (
 	technology_id INT PRIMARY KEY AUTO_INCREMENT,
-    technology_name VARCHAR(100),
+    technology_name VARCHAR(100) UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -13,7 +13,14 @@ class TechCrunchScraper(BaseScraper):
     Scraper responsible for collecting and parsing techcrunch articles.
     '''
 
-    RSS_URL = 'https://techcrunch.com/feed/'
+    SOURCE_METADETA = {
+        "source_name": "TechCrunch",
+        "website_url": "https://techcrunch.com",
+        "rss_feed_url": "https://techcrunch.com/feed/",
+        "country": None,
+        "language": "en" 
+    }
+
 
     def __init__(self):
         super().__init__()
@@ -29,7 +36,7 @@ class TechCrunchScraper(BaseScraper):
 
         articles = []
 
-        article_urls = get_article_urls(self.RSS_URL)
+        article_urls = get_article_urls(self.SOURCE_METADETA["rss_feed_url"])
 
         self.logger.info("Found %d article urls", len(article_urls))
 
@@ -49,6 +56,7 @@ class TechCrunchScraper(BaseScraper):
                 )
 
                 article = self.enricher.enrich(article)
+                print(article)
 
                 articles.append(article)
             

@@ -17,6 +17,7 @@ def main():
 
         print("=" * 80)
         print(f"Title          : {article.title}")
+        print(f"URL            : {article.article_url}")
         print(f"Author(s)      : {article.authors}")
         print(f"Category       : {article.category}")
         print(f"Published At   : {article.published_at}")
@@ -29,6 +30,8 @@ def main():
         print("\nContent Preview:")
         print(article.content[:500])
         print("=" * 80)
+    
+    print(articles[0])
 
 
 if __name__ == '__main__':
