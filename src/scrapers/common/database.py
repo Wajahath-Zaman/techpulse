@@ -43,7 +43,7 @@ class Database:
         if self.cursor:
             self.cursor.close()
             logger.info("Closing MySQL database connection.")
-            logger.inof("Connection closed.")
+            logger.info("Connection closed.")
 
         if self.connection and self.connection.is_connected():
             self.connection.close()

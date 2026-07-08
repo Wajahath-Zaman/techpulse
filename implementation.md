@@ -2287,3 +2287,308 @@ class TechCrunchIntegrator:
             logger.info("Closing database connection.")
             db.close()
 ```
+- Upon first run of the file we recieved:
+```text
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ python -m tests.test_techcrunch_integrator
+2026-07-08 14:43:43,901 | INFO | TechCrunch Integrator | Starting TechCrunch integration pipeline.
+2026-07-08 14:43:43,902 | INFO | TechCrunch Integrator | Scraping articles from TechCrunch.
+2026-07-08 14:43:43,903 | INFO | TechCrunch Scraper | Starting TechCrunch scraping Pipeline.
+2026-07-08 14:43:43,903 | INFO | TechCrunch Scraper | Discovering article URLS from TechCrunch RSS feed.
+2026-07-08 14:43:44,245 | INFO | TechCrunch Scraper | Found 20 article urls
+2026-07-08 14:43:45,029 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/08/hot-french-startup-zml-releases-free-product-to-speed-inference-across-lots-of-ai-chips/
+2026-07-08 14:43:45,237 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/08/sambanova-draws-1b-at-11b-valuation-in-series-f-first-close/
+2026-07-08 14:43:45,404 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/final-extension-startup-battlefield-australia-applications-now-close-july-20/
+2026-07-08 14:43:45,562 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/meta-rolls-out-muse-a-new-ai-image-generator/
+2026-07-08 14:43:45,738 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/why-the-rise-of-open-source-ai-isnt-hurting-anthropic-yet/
+2026-07-08 14:43:45,895 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/microsoft-joins-ai-cost-cutting-trend-by-relying-more-on-its-own-models/
+2026-07-08 14:43:46,046 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/discord-admits-ai-moderation-bug-wrongfully-banned-users-over-harmless-images/
+2026-07-08 14:43:46,194 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/googles-pixel-event-is-set-for-august-12/
+2026-07-08 14:43:46,346 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/figma-acquires-team-behind-a-vibe-coding-app/
+2026-07-08 14:43:46,503 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/netflix-dabbles-in-shorter-video-content-with-its-new-set-of-publisher-deals-with-variety-others/
+2026-07-08 14:43:46,657 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/the-worst-hacks-and-breaches-of-2026-so-far/
+2026-07-08 14:43:46,822 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/
+2026-07-08 14:43:46,966 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/x-adds-a-video-editor-to-encourage-creators-to-post-original-content-not-stolen-reposts/
+2026-07-08 14:43:47,144 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/chemistry-ventures-is-raising-500m-for-its-second-fund/
+2026-07-08 14:43:47,342 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/ai-law-startup-norm-raises-120m-hits-unicorn-valuation/
+2026-07-08 14:43:47,500 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/this-startup-is-pitting-dealerships-against-each-other-to-bid-on-your-used-car/
+2026-07-08 14:43:47,653 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/hacktivists-call-out-trump-by-hacking-and-defacing-us-army-websites/
+2026-07-08 14:43:47,846 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/
+2026-07-08 14:43:48,020 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/the-first-american-autonomous-ground-vehicles-are-fighting-in-ukraine/
+2026-07-08 14:43:48,192 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/06/netflix-invented-binge-watching-now-it-may-have-outgrown-it/
+2026-07-08 14:43:48,311 | INFO | TechCrunch Scraper | Successfully scraped 20 articles.
+2026-07-08 14:43:48,313 | INFO | Database | Connecting to MySQL database...
+2026-07-08 14:43:48,551 | INFO | Database | Succesfully connected to MySQL Database.
+2026-07-08 14:43:48,552 | INFO | TechCrunch Integrator | Loading scraped articles into the database.
+2026-07-08 14:43:48,552 | INFO | DatabaseLoader | Starting database load for 20 articles.
+2026-07-08 14:43:48,553 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/08/hot-french-startup-zml-releases-free-product-to-speed-inference-across-lots-of-ai-chips/
+2026-07-08 14:43:48,558 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/08/hot-french-startup-zml-releases-free-product-to-speed-inference-across-lots-of-ai-chips/
+2026-07-08 14:43:48,559 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/08/sambanova-draws-1b-at-11b-valuation-in-series-f-first-close/
+2026-07-08 14:43:48,562 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/08/sambanova-draws-1b-at-11b-valuation-in-series-f-first-close/
+2026-07-08 14:43:48,562 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/final-extension-startup-battlefield-australia-applications-now-close-july-20/
+2026-07-08 14:43:48,564 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/final-extension-startup-battlefield-australia-applications-now-close-july-20/
+2026-07-08 14:43:48,565 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/meta-rolls-out-muse-a-new-ai-image-generator/
+2026-07-08 14:43:48,567 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/meta-rolls-out-muse-a-new-ai-image-generator/
+2026-07-08 14:43:48,568 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/why-the-rise-of-open-source-ai-isnt-hurting-anthropic-yet/
+2026-07-08 14:43:48,569 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/why-the-rise-of-open-source-ai-isnt-hurting-anthropic-yet/
+2026-07-08 14:43:48,570 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/microsoft-joins-ai-cost-cutting-trend-by-relying-more-on-its-own-models/
+2026-07-08 14:43:48,571 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/microsoft-joins-ai-cost-cutting-trend-by-relying-more-on-its-own-models/
+2026-07-08 14:43:48,572 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/discord-admits-ai-moderation-bug-wrongfully-banned-users-over-harmless-images/
+2026-07-08 14:43:48,574 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/discord-admits-ai-moderation-bug-wrongfully-banned-users-over-harmless-images/
+2026-07-08 14:43:48,576 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/googles-pixel-event-is-set-for-august-12/
+2026-07-08 14:43:48,581 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/googles-pixel-event-is-set-for-august-12/
+2026-07-08 14:43:48,582 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/figma-acquires-team-behind-a-vibe-coding-app/
+2026-07-08 14:43:48,583 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/figma-acquires-team-behind-a-vibe-coding-app/
+2026-07-08 14:43:48,584 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/netflix-dabbles-in-shorter-video-content-with-its-new-set-of-publisher-deals-with-variety-others/
+2026-07-08 14:43:48,585 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/netflix-dabbles-in-shorter-video-content-with-its-new-set-of-publisher-deals-with-variety-others/
+2026-07-08 14:43:48,585 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/the-worst-hacks-and-breaches-of-2026-so-far/
+2026-07-08 14:43:48,587 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/the-worst-hacks-and-breaches-of-2026-so-far/
+2026-07-08 14:43:48,587 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/
+2026-07-08 14:43:48,589 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/
+2026-07-08 14:43:48,589 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/x-adds-a-video-editor-to-encourage-creators-to-post-original-content-not-stolen-reposts/
+2026-07-08 14:43:48,591 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/x-adds-a-video-editor-to-encourage-creators-to-post-original-content-not-stolen-reposts/
+2026-07-08 14:43:48,593 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/chemistry-ventures-is-raising-500m-for-its-second-fund/
+2026-07-08 14:43:48,594 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/chemistry-ventures-is-raising-500m-for-its-second-fund/
+2026-07-08 14:43:48,598 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/ai-law-startup-norm-raises-120m-hits-unicorn-valuation/
+2026-07-08 14:43:48,599 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/ai-law-startup-norm-raises-120m-hits-unicorn-valuation/
+2026-07-08 14:43:48,599 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/this-startup-is-pitting-dealerships-against-each-other-to-bid-on-your-used-car/
+2026-07-08 14:43:48,601 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/this-startup-is-pitting-dealerships-against-each-other-to-bid-on-your-used-car/
+2026-07-08 14:43:48,604 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/hacktivists-call-out-trump-by-hacking-and-defacing-us-army-websites/
+2026-07-08 14:43:48,610 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/hacktivists-call-out-trump-by-hacking-and-defacing-us-army-websites/
+2026-07-08 14:43:48,614 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/
+2026-07-08 14:43:48,616 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/
+2026-07-08 14:43:48,617 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/the-first-american-autonomous-ground-vehicles-are-fighting-in-ukraine/
+2026-07-08 14:43:48,620 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/the-first-american-autonomous-ground-vehicles-are-fighting-in-ukraine/
+2026-07-08 14:43:48,625 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/06/netflix-invented-binge-watching-now-it-may-have-outgrown-it/
+2026-07-08 14:43:48,627 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/06/netflix-invented-binge-watching-now-it-may-have-outgrown-it/
+2026-07-08 14:43:48,628 | INFO | DatabaseLoader | Finished Processing 20 articles for the source: TechCrunch
+2026-07-08 14:43:48,628 | INFO | DatabaseLoader | 
+
+            =====================================
+            Database Load Summary
+            =====================================
+
+            Source      : TechCrunch
+            Processed   : 20
+            Inserted    : 0
+            Skipped     : 20
+            Failed      : 0
+
+            =====================================
+            
+2026-07-08 14:43:48,632 | INFO | TechCrunch Integrator | TechCrunch integration pipeline completed successfully.
+2026-07-08 14:43:48,633 | INFO | TechCrunch Integrator | Closing database connection.
+2026-07-08 14:43:48,633 | INFO | Database | Closing MySQL database connection.
+2026-07-08 14:43:48,634 | INFO | Database | Connection closed.
+(.venv) 
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ 
+```
+- Now we will create the scraper_runner file which will be used by github actions for automation.
+- The runner flow will be like this:
+```text
+Runner Started
+        │
+        ▼
+For each Integrator
+        │
+        ├── Log start
+        ├── Run integrator
+        ├── Log success
+        └── If failed → log error and continue
+        │
+        ▼
+Runner Summary
+        │
+        ▼
+Runner Finished
+```
+
+- The code for the file is below:
+```python
+""""
+Scraper Runner
+
+Application entry point for the Ingestion Pipelines
+
+Responsibilities:
+- Execute all configured source integrators.
+- Continue executing remaining integrators even if one fails.
+- Log the overall execution progress.
+
+This module contains no scraping or database logic.
+"""
+
+from scrapers.common.logger import get_logger
+from scrapers.techcrunch.integrator import TechCrunchIntegrator
+
+logger = get_logger("Scraper Runner")
+
+class ScraperRunner():
+    """
+    Runs all available source integration pipelines.
+    """
+
+    def __init__(self):
+
+        self.integrators = [
+            TechCrunchIntegrator(),
+        ]
+
+    def run(self):
+
+        logger.info("=" * 60)
+        logger.info("TechPulse Scraper Runner Started")
+        logger.info("=" * 60)
+
+        self.successful = 0
+        self.failed = 0
+
+        for integrator in self.integrators:
+
+            logger.info("Running %s ...", (integrator.__class__.__name__))
+
+            try:
+                integrator.run()
+                self.successful = +1
+
+                logger.info("%s completed successfully.", integrator.__class__.__name__)
+
+            except Exception:
+                
+                self.failed = +1
+
+                logger.exception(
+                    "$s failed."
+                    , integrator.__class__.__name__
+                )
+
+        logger.info("=" * 60)
+        logger.info("Scraper Runner Summary")
+        logger.info("Total Integrators : %d", len(self.integrators))
+        logger.info("Successful        : %d", self.successful)
+        logger.info("Failed            : %d", self.failed)
+        logger.info("=" * 60)
+
+        logger.info("TechPulse Scraper Runnner Finished.")
+
+
+def main():
+
+    runner = ScraperRunner()
+    runner.run()
+
+
+if __name__ == '__main__':
+    main()
+```
+- In the root terminal I ran a command "python -m tests.test_scrapper_runner"
+It returned the text:
+```text
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ python -m tests.test_scrapper_runner
+2026-07-08 15:08:28,728 | INFO | Scraper Runner | ============================================================
+2026-07-08 15:08:28,728 | INFO | Scraper Runner | TechPulse Scraper Runner Started
+2026-07-08 15:08:28,729 | INFO | Scraper Runner | ============================================================
+2026-07-08 15:08:28,729 | INFO | Scraper Runner | Running TechCrunchIntegrator ...
+2026-07-08 15:08:28,730 | INFO | TechCrunch Integrator | Starting TechCrunch integration pipeline.
+2026-07-08 15:08:28,731 | INFO | TechCrunch Integrator | Scraping articles from TechCrunch.
+2026-07-08 15:08:28,732 | INFO | TechCrunch Scraper | Starting TechCrunch scraping Pipeline.
+2026-07-08 15:08:28,732 | INFO | TechCrunch Scraper | Discovering article URLS from TechCrunch RSS feed.
+2026-07-08 15:08:29,162 | INFO | TechCrunch Scraper | Found 20 article urls
+2026-07-08 15:08:30,134 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/08/hot-french-startup-zml-releases-free-product-to-speed-inference-across-lots-of-ai-chips/
+2026-07-08 15:08:30,385 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/08/sambanova-draws-1b-at-11b-valuation-in-series-f-first-close/
+2026-07-08 15:08:30,565 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/final-extension-startup-battlefield-australia-applications-now-close-july-20/
+2026-07-08 15:08:30,740 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/meta-rolls-out-muse-a-new-ai-image-generator/
+2026-07-08 15:08:31,011 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/why-the-rise-of-open-source-ai-isnt-hurting-anthropic-yet/
+2026-07-08 15:08:31,234 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/microsoft-joins-ai-cost-cutting-trend-by-relying-more-on-its-own-models/
+2026-07-08 15:08:31,423 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/discord-admits-ai-moderation-bug-wrongfully-banned-users-over-harmless-images/
+2026-07-08 15:08:31,617 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/googles-pixel-event-is-set-for-august-12/
+2026-07-08 15:08:31,797 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/figma-acquires-team-behind-a-vibe-coding-app/
+2026-07-08 15:08:31,984 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/netflix-dabbles-in-shorter-video-content-with-its-new-set-of-publisher-deals-with-variety-others/
+2026-07-08 15:08:32,165 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/the-worst-hacks-and-breaches-of-2026-so-far/
+2026-07-08 15:08:32,345 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/
+2026-07-08 15:08:32,508 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/x-adds-a-video-editor-to-encourage-creators-to-post-original-content-not-stolen-reposts/
+2026-07-08 15:08:32,712 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/chemistry-ventures-is-raising-500m-for-its-second-fund/
+2026-07-08 15:08:32,871 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/ai-law-startup-norm-raises-120m-hits-unicorn-valuation/
+2026-07-08 15:08:33,026 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/this-startup-is-pitting-dealerships-against-each-other-to-bid-on-your-used-car/
+2026-07-08 15:08:33,174 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/hacktivists-call-out-trump-by-hacking-and-defacing-us-army-websites/
+2026-07-08 15:08:33,350 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/
+2026-07-08 15:08:33,534 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/07/the-first-american-autonomous-ground-vehicles-are-fighting-in-ukraine/
+2026-07-08 15:08:33,719 | INFO | TechCrunchScraper | Fetched article: https://techcrunch.com/2026/07/06/netflix-invented-binge-watching-now-it-may-have-outgrown-it/
+2026-07-08 15:08:33,868 | INFO | TechCrunch Scraper | Successfully scraped 20 articles.
+2026-07-08 15:08:33,869 | INFO | Database | Connecting to MySQL database...
+2026-07-08 15:08:34,145 | INFO | Database | Succesfully connected to MySQL Database.
+2026-07-08 15:08:34,146 | INFO | TechCrunch Integrator | Loading scraped articles into the database.
+2026-07-08 15:08:34,146 | INFO | DatabaseLoader | Starting database load for 20 articles.
+2026-07-08 15:08:34,147 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/08/hot-french-startup-zml-releases-free-product-to-speed-inference-across-lots-of-ai-chips/
+2026-07-08 15:08:34,150 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/08/hot-french-startup-zml-releases-free-product-to-speed-inference-across-lots-of-ai-chips/
+2026-07-08 15:08:34,151 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/08/sambanova-draws-1b-at-11b-valuation-in-series-f-first-close/
+2026-07-08 15:08:34,152 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/08/sambanova-draws-1b-at-11b-valuation-in-series-f-first-close/
+2026-07-08 15:08:34,153 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/final-extension-startup-battlefield-australia-applications-now-close-july-20/
+2026-07-08 15:08:34,154 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/final-extension-startup-battlefield-australia-applications-now-close-july-20/
+2026-07-08 15:08:34,155 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/meta-rolls-out-muse-a-new-ai-image-generator/
+2026-07-08 15:08:34,156 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/meta-rolls-out-muse-a-new-ai-image-generator/
+2026-07-08 15:08:34,156 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/why-the-rise-of-open-source-ai-isnt-hurting-anthropic-yet/
+2026-07-08 15:08:34,158 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/why-the-rise-of-open-source-ai-isnt-hurting-anthropic-yet/
+2026-07-08 15:08:34,158 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/microsoft-joins-ai-cost-cutting-trend-by-relying-more-on-its-own-models/
+2026-07-08 15:08:34,160 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/microsoft-joins-ai-cost-cutting-trend-by-relying-more-on-its-own-models/
+2026-07-08 15:08:34,160 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/discord-admits-ai-moderation-bug-wrongfully-banned-users-over-harmless-images/
+2026-07-08 15:08:34,161 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/discord-admits-ai-moderation-bug-wrongfully-banned-users-over-harmless-images/
+2026-07-08 15:08:34,162 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/googles-pixel-event-is-set-for-august-12/
+2026-07-08 15:08:34,163 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/googles-pixel-event-is-set-for-august-12/
+2026-07-08 15:08:34,164 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/figma-acquires-team-behind-a-vibe-coding-app/
+2026-07-08 15:08:34,166 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/figma-acquires-team-behind-a-vibe-coding-app/
+2026-07-08 15:08:34,166 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/netflix-dabbles-in-shorter-video-content-with-its-new-set-of-publisher-deals-with-variety-others/
+2026-07-08 15:08:34,168 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/netflix-dabbles-in-shorter-video-content-with-its-new-set-of-publisher-deals-with-variety-others/
+2026-07-08 15:08:34,168 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/the-worst-hacks-and-breaches-of-2026-so-far/
+2026-07-08 15:08:34,170 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/the-worst-hacks-and-breaches-of-2026-so-far/
+2026-07-08 15:08:34,171 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/
+2026-07-08 15:08:34,174 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/the-coding-agent-wars-are-spilling-into-the-rest-of-the-office-claude-cowork/
+2026-07-08 15:08:34,176 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/x-adds-a-video-editor-to-encourage-creators-to-post-original-content-not-stolen-reposts/
+2026-07-08 15:08:34,178 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/x-adds-a-video-editor-to-encourage-creators-to-post-original-content-not-stolen-reposts/
+2026-07-08 15:08:34,178 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/chemistry-ventures-is-raising-500m-for-its-second-fund/
+2026-07-08 15:08:34,181 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/chemistry-ventures-is-raising-500m-for-its-second-fund/
+2026-07-08 15:08:34,182 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/ai-law-startup-norm-raises-120m-hits-unicorn-valuation/
+2026-07-08 15:08:34,183 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/ai-law-startup-norm-raises-120m-hits-unicorn-valuation/
+2026-07-08 15:08:34,184 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/this-startup-is-pitting-dealerships-against-each-other-to-bid-on-your-used-car/
+2026-07-08 15:08:34,185 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/this-startup-is-pitting-dealerships-against-each-other-to-bid-on-your-used-car/
+2026-07-08 15:08:34,185 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/hacktivists-call-out-trump-by-hacking-and-defacing-us-army-websites/
+2026-07-08 15:08:34,187 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/hacktivists-call-out-trump-by-hacking-and-defacing-us-army-websites/
+2026-07-08 15:08:34,187 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/
+2026-07-08 15:08:34,188 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/
+2026-07-08 15:08:34,189 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/07/the-first-american-autonomous-ground-vehicles-are-fighting-in-ukraine/
+2026-07-08 15:08:34,190 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/07/the-first-american-autonomous-ground-vehicles-are-fighting-in-ukraine/
+2026-07-08 15:08:34,191 | INFO | DatabaseLoader | Processing article: https://techcrunch.com/2026/07/06/netflix-invented-binge-watching-now-it-may-have-outgrown-it/
+2026-07-08 15:08:34,193 | INFO | DatabaseLoader | Skipping existing article: https://techcrunch.com/2026/07/06/netflix-invented-binge-watching-now-it-may-have-outgrown-it/
+2026-07-08 15:08:34,193 | INFO | DatabaseLoader | Finished Processing 20 articles for the source: TechCrunch
+2026-07-08 15:08:34,194 | INFO | DatabaseLoader | 
+
+            =====================================
+            Database Load Summary
+            =====================================
+
+            Source      : TechCrunch
+            Processed   : 20
+            Inserted    : 0
+            Skipped     : 20
+            Failed      : 0
+
+            =====================================
+            
+2026-07-08 15:08:34,196 | INFO | TechCrunch Integrator | TechCrunch integration pipeline completed successfully.
+2026-07-08 15:08:34,198 | INFO | TechCrunch Integrator | Closing database connection.
+2026-07-08 15:08:34,198 | INFO | Database | Closing MySQL database connection.
+2026-07-08 15:08:34,199 | INFO | Database | Connection closed.
+2026-07-08 15:08:34,202 | INFO | Scraper Runner | TechCrunchIntegrator completed successfully.
+2026-07-08 15:08:34,203 | INFO | Scraper Runner | ============================================================
+2026-07-08 15:08:34,203 | INFO | Scraper Runner | Scraper Runner Summary
+2026-07-08 15:08:34,204 | INFO | Scraper Runner | Total Integrators : 1
+2026-07-08 15:08:34,204 | INFO | Scraper Runner | Successful        : 1
+2026-07-08 15:08:34,205 | INFO | Scraper Runner | Failed            : 0
+2026-07-08 15:08:34,205 | INFO | Scraper Runner | ============================================================
+2026-07-08 15:08:34,205 | INFO | Scraper Runner | TechPulse Scraper Runnner Finished.
+(.venv) 
+mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
+$ 
+```
