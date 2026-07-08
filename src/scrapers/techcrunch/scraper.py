@@ -6,6 +6,9 @@ from scrapers.common.base_scraper import BaseScraper
 from scrapers.common.rss import get_article_urls
 
 from .parser import TechCrunchParser
+from scrapers.common.logger import get_logger
+
+logger = get_logger("TechCrunch Scraper")
 
 
 class TechCrunchScraper(BaseScraper):
@@ -13,7 +16,7 @@ class TechCrunchScraper(BaseScraper):
     Scraper responsible for collecting and parsing techcrunch articles.
     '''
 
-    SOURCE_METADETA = {
+    SOURCE_METADATA = {
         "source_name": "TechCrunch",
         "website_url": "https://techcrunch.com",
         "rss_feed_url": "https://techcrunch.com/feed/",
@@ -33,18 +36,22 @@ class TechCrunchScraper(BaseScraper):
         Scrape all articles from the TechCrunch RSS feed
         Returns: A list of Article Objects.
         """
+        logger.info("Starting TechCrunch scraping Pipeline.")
 
         articles = []
 
-        article_urls = get_article_urls(self.SOURCE_METADETA["rss_feed_url"])
+        logger.info("Discovering article URLS from TechCrunch RSS feed.")
 
-        self.logger.info("Found %d article urls", len(article_urls))
+        article_urls = get_article_urls(self.SOURCE_METADATA["rss_feed_url"])
+
+        logger.info("Found %d article urls", len(article_urls))
 
         for url in article_urls:
 
             response = self.fetch(url)
 
             if response is None:
+                logger.warning("Failed to fetch article: %s", url)
                 continue
 
             soup = BeautifulSoup(response.text, "html.parser")
@@ -56,15 +63,14 @@ class TechCrunchScraper(BaseScraper):
                 )
 
                 article = self.enricher.enrich(article)
-                print(article)
 
                 articles.append(article)
             
             except Exception as e:
 
-                self.logger.exception(
+                logger.exception(
                     'Failed to parse acticle %s : %s', url, e)
             
-        self.logger.info("Successfully scraped %d articles.", len(articles))
+        logger.info("Successfully scraped %d articles.", len(articles))
 
         return articles

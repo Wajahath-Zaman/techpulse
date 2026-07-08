@@ -1943,5 +1943,347 @@ Connection Closed.
     - Transactions: Instead of commiting every step we must commit only once per article at the end of the process. This maintains the database consistency. If an error occurs midway we can rollback.
     - Code:
     ```python
+    """
+    Database Loader
 
+    Responsible for persisting fully scraped Article objects into the TechPulse
+    relational database.
+
+    Responsibilities:
+    - Prevent duplicate articles.
+    - Insert new articles.
+    - Create or reuse related entities (source, authors, companies, technologies, tags).
+    - Populate bridge tables.
+    - Maintain transactional consistency.
+
+    This class is the only component responsible for writing data to the database.
+    """
+    from scrapers.common.database import Database
+
+    class DatabaseLoader():
+
+        def __init__(self, db:Database):
+            self.db = db
+            self.cursor = db.get_cursor()
+
+        def load_articles(self, articles, source_metadata):
+            '''
+            Public Point of Entry.
+            Load all the articles into the database.
+            '''
+
+            for article in articles:
+                try:
+                    self._load_single_article(article, source_metadata)
+                except Exception as e:
+                    self.db.rollback()
+                    raise e
+                
+
+        def _load_single_article(self, article, source_metadata):
+
+            # ArticleExists ?
+            # Yes return article_id
+            # Insert The article
+            # Return article id
+
+            exists = self._article_exists(article.article_url)
+
+            if exists:
+                return exists[0]
+            
+            source_id = self._get_or_create_source(source_metadata)
+
+            author_ids = []
+
+            for author in article.authors:
+                author_id = self._get_or_create_author(source_id, author)
+                author_ids.append(author_id)
+
+            company_ids = []
+
+            for company in article.companies:
+                company_id = self._get_or_create_company(company)
+                company_ids.append(company_id)
+
+            technology_ids = []
+
+            for technology in article.technologies:
+                technology_id = self._get_or_create_technology(technology)
+                technology_ids.append(technology_id)
+
+            tag_ids = []
+
+            for tag in article.tags:
+                tag_id = self._get_or_create_tag(tag)
+                tag_ids.append(tag_id)
+
+
+            category_id = self._get_or_create_category(article.category)
+            
+            article_id = self._insert_article(article, source_id, category_id)
+
+            self._insert_article_authors(article_id, author_ids)
+
+            self._insert_article_companies(article_id, company_ids)
+
+            self._insert_article_technologies(article_id, technology_ids)
+
+            self._insert_article_tags(article_id, tag_ids)
+            
+            self.db.commit()
+
+            return article_id
+
+            
+        def _article_exists(self, article_url):
+
+            self.cursor.execute("SELECT article_id FROM articles WHERE article_url =  %s", (article_url,))
+            result = self.cursor.fetchone()
+
+            return result
+
+        def _insert_article(self, article, source_id, category_id):
+
+            values_of_article = (
+            article.article_url,
+            source_id,
+            category_id,
+            article.title,
+            article.summary,
+            article.content,
+            article.published_at,
+            article.word_count,
+            article.reading_time,
+            article.content_hash
+            )
+
+            self.cursor.execute("INSERT INTO articles (article_url, source_id, category_id, title, summary, content, published_at, word_count, reading_time, content_hash) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", values_of_article)
+
+            return self.cursor.lastrowid
+
+
+
+
+        def _get_or_create_source(self, source_metadata):
+
+            self.cursor.execute("SELECT source_id FROM sources WHERE source_name=%s and website_url=%s", (source_metadata['source_name'], source_metadata['website_url']))
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+                self.cursor.execute("INSERT INTO sources (source_name, website_url) VALUES (%s, %s)", (source_metadata['source_name'], source_metadata['website_url']))
+
+                return self.cursor.lastrowid
+
+
+
+        def _get_or_create_category(self, category):
+
+            self.cursor.execute("SELECT category_id FROM categories WHERE category_name = %s", (category,))
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+                self.cursor.execute("INSERT INTO categories(category_name) VALUES (%s)", (category,))
+
+                return self.cursor.lastrowid
+
+
+        def _get_or_create_author(self, source_id, display_name):
+
+            self.cursor.execute("SELECT author_id FROM authors WHERE source_id = %s and display_name = %s", (source_id, display_name))
+
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+
+                self.cursor.execute("INSERT INTO authors (source_id, display_name) VALUES (%s, %s)", (source_id, display_name))
+
+                return self.cursor.lastrowid
+            
+        def _get_or_create_company(self, company):
+
+            self.cursor.execute("SELECT company_id FROM companies WHERE company_name = %s", (company,))
+
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+
+                self.cursor.execute("INSERT INTO companies (company_name) VALUES (%s)", (company,))
+
+                return self.cursor.lastrowid
+            
+        def _get_or_create_technology(self, technology):
+
+            self.cursor.execute("SELECT technology_id FROM technologies WHERE technology_name = %s", (technology,))
+
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+                
+                self.cursor.execute("INSERT INTO technologies (technology_name) VALUES (%s)", (technology,))
+
+                return self.cursor.lastrowid
+
+        def _get_or_create_tag(self, tag):
+
+            self.cursor.execute("SELECT tag_id FROM tags WHERE tag_name = %s", (tag,))
+
+            result = self.cursor.fetchone()
+
+            if result:
+                return result[0]
+            else:
+
+                self.cursor.execute("INSERT INTO tags (tag_name) VALUES (%s)", (tag,))
+
+                return self.cursor.lastrowid
+
+
+        def _insert_article_authors(self, article_id, author_ids):
+            '''
+            Insert realtionships between an article and its authors.
+            '''
+            for author_id in author_ids:
+                self.cursor.execute("INSERT INTO article_authors (article_id, author_id) VALUES (%s, %s)", (article_id, author_id))
+
+
+        def _insert_article_companies(self, article_id, company_ids):
+            '''
+            Insert relationships between an article and its companies
+            '''
+
+            for company_id in company_ids:
+                self.cursor.execute("INSERT INTO article_companies (article_id, company_id) VALUES (%s, %s)", (article_id, company_id))
+
+        def _insert_article_technologies(self, article_id, technology_ids):
+            '''
+            Insert the relationships between the article and its technologies
+            '''
+            
+            for technology_id in technology_ids:
+                self.cursor.execute("INSERT INTO article_technologies (article_id, technology_id) VALUES (%s, %s)", (article_id, technology_id))
+
+        def _insert_article_tags(self, article_id, tag_ids):
+            '''
+            Insert the relationships between the article and its tags
+            '''
+
+            for tag_id in tag_ids:
+                self.cursor.execute("INSERT INTO article_tags (article_id, tag_id) VALUES (%s, %s)", (article_id, tag_id))
     ```
+    - This is tested using the code:
+    ```python
+    from src.scrapers.common.database_loader import DatabaseLoader
+    from src.scrapers.common.database import Database
+
+    from datetime import datetime, timezone, timedelta
+    from src.scrapers.common.article import Article   # assuming you saved your dataclass in article_model.py
+
+
+    def main():
+        # Create Article dataclass object instead of dict
+        article = Article(
+            article_url="https://techcrunch.com/2026/07/07/savis-app-aims-to-protect-consumers-from-realistic-ai-scams-like-kidnappers-demanding-ransom/",
+            source_name="TechCrunch",
+            title="Savi’s app aims to protect consumers from realistic AI scams like kidnappers demanding ransom",
+            summary="Brothers Patrick and Ryan Coughlin, each with impressive careers in the tech industry...",
+            content="Full article content here...",
+            authors=["Julie Bort"],
+            category="AI",
+            tags=["AI", "AI scams", "fraud detection", "Savi", "Security", "Startups"],
+            companies=[],
+            technologies=[],
+            published_at=datetime(2026, 7, 7, 5, 0, tzinfo=timezone(timedelta(days=-1, seconds=61200))),
+            word_count=937,
+            reading_time=5,
+            content_hash="632a3f3d2f2c423ea3f0e3f6c1d2dd0b2f8b8af76af8068165f62e395d8639ef",
+            scraped_at=datetime(2026, 7, 7, 12, 21, 15, 99423)
+        )
+
+        SOURCE_METADETA = {
+            "source_name": "TechCrunch",
+            "website_url": "https://techcrunch.com",
+            "rss_feed_url": "https://techcrunch.com/feed/",
+            "country": None,
+            "language": "en"
+        }
+
+        db = Database()
+        db.connect()
+        loader = DatabaseLoader(db)
+
+        try:
+            hey = loader.load_articles([article], SOURCE_METADETA)
+            print(hey)
+        except Exception as e:
+            print("Error:", e)
+
+
+    if __name__ == "__main__":
+        main()
+    ```
+- We have completed the logging for all the previously created files.
+
+- Now we implement the pipeline integrator. At this moment we have two different processes. 
+1. scrape and parse.
+2. Database loader to MYSQL
+- We need to connect these two now. That is done using a integrator.
+- Code for the integrator is as follows:
+```python
+from scrapers.common.database import Database
+from scrapers.common.database_loader import DatabaseLoader
+from scrapers.common.logger import get_logger
+from scrapers.techcrunch.scraper import TechCrunchScraper
+
+logger = get_logger("TechCrunch Integrator")
+
+
+class TechCrunchIntegrator:
+    """
+    Orchestrates the complete TechCrunch ETL pipeline.
+
+    Pipeline:
+    1. Scrape articles from TechCrunch.
+    2. Load the scraped articles into the database.
+    """
+
+    def run(self):
+
+        logger.info("Starting TechCrunch integration pipeline.")
+
+        scraper = TechCrunchScraper()
+
+        logger.info("Scraping articles from TechCrunch.")
+        articles = scraper.scrape()
+
+        db = Database()
+        db.connect()
+
+        try:
+            logger.info("Loading scraped articles into the database.")
+
+            loader = DatabaseLoader(db)
+            loader.load_articles(articles, scraper.SOURCE_METADATA)
+
+            logger.info(
+                "TechCrunch integration pipeline completed successfully."
+            )
+
+        except Exception:
+            logger.exception("TechCrunch integration pipeline failed.")
+            raise
+
+        finally:
+            logger.info("Closing database connection.")
+            db.close()
+```

@@ -14,6 +14,9 @@ Responsibilities:
 This class is the only component responsible for writing data to the database.
 """
 from scrapers.common.database import Database
+from scrapers.common.logger import get_logger
+
+logger = get_logger("DatabaseLoader")
 
 class DatabaseLoader():
 
@@ -21,19 +24,47 @@ class DatabaseLoader():
         self.db = db
         self.cursor = db.get_cursor()
 
+
     def load_articles(self, articles, source_metadata):
         '''
         Public Point of Entry.
         Load all the articles into the database.
         '''
 
+        self.inserted = 0
+        self.skipped = 0
+        self.failed = 0
+
+        logger.info(f"Starting database load for {len(articles)} articles.")
+
         for article in articles:
             try:
                 self._load_single_article(article, source_metadata)
-            except Exception as e:
+
+            except Exception:
                 self.db.rollback()
-                raise e
-            
+                self.failed += 1
+                logger.exception(f"Failed to load article: {article.article_url}")
+                logger.info(f"Rolling back transaction for article: {article.article_url}")
+                raise 
+        
+        logger.info(f"Finished Processing {len(articles)} articles for the source: {source_metadata['source_name']}")
+        logger.info(
+                f"""
+
+            =====================================
+            Database Load Summary
+            =====================================
+
+            Source      : {source_metadata['source_name']}
+            Processed   : {len(articles)}
+            Inserted    : {self.inserted}
+            Skipped     : {self.skipped}
+            Failed      : {self.failed}
+
+            =====================================
+            """
+            )            
 
     def _load_single_article(self, article, source_metadata):
 
@@ -42,9 +73,12 @@ class DatabaseLoader():
         # Insert The article
         # Return article id
 
+        logger.info(f"Processing article: {article.article_url}")
+
         exists = self._article_exists(article.article_url)
 
         if exists:
+            self.skipped += 1
             return exists[0]
         
         source_id = self._get_or_create_source(source_metadata)
@@ -87,6 +121,8 @@ class DatabaseLoader():
         self._insert_article_tags(article_id, tag_ids)
         
         self.db.commit()
+        self.inserted += 1
+        logger.info(f"Successfully Loaded article '{article.title}'.")
 
         return article_id
 
@@ -95,10 +131,15 @@ class DatabaseLoader():
 
         self.cursor.execute("SELECT article_id FROM articles WHERE article_url =  %s", (article_url,))
         result = self.cursor.fetchone()
+        
+        if result:
+            logger.info(f"Skipping existing article: {article_url}")
 
         return result
 
     def _insert_article(self, article, source_id, category_id):
+
+        logger.info(f"Inserting article into the database: {article.title}")
 
         values_of_article = (
         article.article_url,
@@ -114,7 +155,6 @@ class DatabaseLoader():
         )
 
         self.cursor.execute("INSERT INTO articles (article_url, source_id, category_id, title, summary, content, published_at, word_count, reading_time, content_hash) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", values_of_article)
-
         return self.cursor.lastrowid
 
 
@@ -126,8 +166,10 @@ class DatabaseLoader():
         result = self.cursor.fetchone()
 
         if result:
+            logger.info(f"Using Existing Source: {source_metadata['source_name']}")
             return result[0]
         else:
+            logger.info("Inserting the source in the database.")
             self.cursor.execute("INSERT INTO sources (source_name, website_url) VALUES (%s, %s)", (source_metadata['source_name'], source_metadata['website_url']))
 
             return self.cursor.lastrowid
@@ -142,6 +184,7 @@ class DatabaseLoader():
         if result:
             return result[0]
         else:
+            logger.info(f"Creating new category: {category}")
             self.cursor.execute("INSERT INTO categories(category_name) VALUES (%s)", (category,))
 
             return self.cursor.lastrowid
@@ -156,7 +199,7 @@ class DatabaseLoader():
         if result:
             return result[0]
         else:
-
+            logger.info(f"Creating new author: '{display_name}'")
             self.cursor.execute("INSERT INTO authors (source_id, display_name) VALUES (%s, %s)", (source_id, display_name))
 
             return self.cursor.lastrowid
@@ -170,7 +213,7 @@ class DatabaseLoader():
         if result:
             return result[0]
         else:
-
+            logger.info(f"Creating new company entry: {company}.")
             self.cursor.execute("INSERT INTO companies (company_name) VALUES (%s)", (company,))
 
             return self.cursor.lastrowid
@@ -184,7 +227,7 @@ class DatabaseLoader():
         if result:
             return result[0]
         else:
-            
+            logger.info(f"Creating new technology entry: {technology}")
             self.cursor.execute("INSERT INTO technologies (technology_name) VALUES (%s)", (technology,))
 
             return self.cursor.lastrowid
@@ -198,7 +241,7 @@ class DatabaseLoader():
         if result:
             return result[0]
         else:
-
+            logger.info(f"Creating new tag: {tag}.")
             self.cursor.execute("INSERT INTO tags (tag_name) VALUES (%s)", (tag,))
 
             return self.cursor.lastrowid

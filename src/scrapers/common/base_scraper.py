@@ -36,6 +36,7 @@ class BaseScraper(ABC):
 
                 response = self.session.get(url, timeout=self.timeout) # This will do everything in one session rather than making many requests for each url.
                 response.raise_for_status()
+                self.logger.info("Fetched article: %s", url)
 
                 return response
 
