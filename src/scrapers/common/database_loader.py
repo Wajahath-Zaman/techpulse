@@ -166,7 +166,7 @@ class DatabaseLoader():
 
     def _get_or_create_source(self, source_metadata):
 
-        self.cursor.execute("SELECT source_id FROM sources WHERE source_name=%s and website_url=%s", (source_metadata['source_name'], source_metadata['website_url']))
+        self.cursor.execute("SELECT source_id FROM sources WHERE website_url=%s", (source_metadata['website_url'],))
         result = self.cursor.fetchone()
 
         if result:

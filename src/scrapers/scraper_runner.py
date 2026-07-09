@@ -15,7 +15,6 @@ from scrapers.common.logger import get_logger
 from scrapers.techcrunch.integrator import TechCrunchIntegrator
 from scrapers.theverge.integrator import TheVergeIntegrator
 from scrapers.venturebeat.integrator import VentureBeatIntegrator
-from scrapers.arstechnica.integrator import ArsTechnicaIntegrator
 
 logger = get_logger("Scraper Runner")
 
@@ -30,7 +29,6 @@ class ScraperRunner():
             TechCrunchIntegrator(),
             TheVergeIntegrator(),
             VentureBeatIntegrator(),
-            ArsTechnicaIntegrator()
         ]
 
     def run(self):
@@ -48,16 +46,16 @@ class ScraperRunner():
 
             try:
                 integrator.run()
-                self.successful = +1
+                self.successful += 1
 
                 logger.info("%s completed successfully.", integrator.__class__.__name__)
 
             except Exception:
                 
-                self.failed = +1
+                self.failed += 1
 
                 logger.exception(
-                    "$s failed."
+                    "%s failed."
                     , integrator.__class__.__name__
                 )
 
