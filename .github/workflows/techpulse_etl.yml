@@ -28,6 +28,7 @@ jobs:
 
       - name: Run ETL Pipeline
         env:
+          PYTHONPATH: ${{ github.workspace }}/src
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_NAME: ${{ secrets.DB_NAME }}
@@ -35,4 +36,4 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
         run: |
-          python -m src.scrapers.scraper_runner
+          python -m scrapers.scraper_runner
