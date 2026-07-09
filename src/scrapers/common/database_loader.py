@@ -87,7 +87,9 @@ class DatabaseLoader():
 
         for author in article.authors:
             author_id = self._get_or_create_author(source_id, author)
-            author_ids.append(author_id)
+
+            if author_id not in author_ids:
+                author_ids.append(author_id)
 
         company_ids = []
 
@@ -105,7 +107,9 @@ class DatabaseLoader():
 
         for tag in article.tags:
             tag_id = self._get_or_create_tag(tag)
-            tag_ids.append(tag_id)
+
+            if tag_id not in tag_ids:
+                tag_ids.append(tag_id)
 
 
         category_id = self._get_or_create_category(article.category)

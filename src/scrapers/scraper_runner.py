@@ -13,6 +13,9 @@ This module contains no scraping or database logic.
 
 from scrapers.common.logger import get_logger
 from scrapers.techcrunch.integrator import TechCrunchIntegrator
+from scrapers.theverge.integrator import TheVergeIntegrator
+from scrapers.venturebeat.integrator import VentureBeatIntegrator
+from scrapers.arstechnica.integrator import ArsTechnicaIntegrator
 
 logger = get_logger("Scraper Runner")
 
@@ -25,6 +28,9 @@ class ScraperRunner():
 
         self.integrators = [
             TechCrunchIntegrator(),
+            TheVergeIntegrator(),
+            VentureBeatIntegrator(),
+            ArsTechnicaIntegrator()
         ]
 
     def run(self):

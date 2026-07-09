@@ -2592,3 +2592,5 @@ $ python -m tests.test_scrapper_runner
 mzama@LAPTOP-QF0LKB3O MINGW64 ~/Desktop/Techpulse (main)
 $ 
 ```
+
+- Now we will perform same implementation of this files for different sources.
