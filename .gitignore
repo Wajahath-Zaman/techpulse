@@ -30,3 +30,20 @@ Thumbs.db
 full_plan.md
 
 .env
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
