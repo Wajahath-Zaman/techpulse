@@ -28,6 +28,7 @@ data/processed/*
 Thumbs.db
 
 full_plan.md
+implementation.md
 
 .env
 

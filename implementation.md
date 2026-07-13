@@ -2594,3 +2594,78 @@ $
 ```
 
 - Now we will perform same implementation of this files for different sources.
+- After the implementation was done we added the sources in the scraper_runner with the first File. Now all the sources are running win sequence.
+
+- But before anything we need to remember that we migrated from the local mysql database to TiDB cloud database so that the github actions can work properly. 
+
+**We will write the entire procedure later**
+
+- Then we pushed it to github after committing. 
+- Then we created a folder in root directory as ".github/workflows" and inside that we created the file as techpulse_etl.yml with code as 
+```yml
+name: TechPulse ETL Pipeline
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  run-etl:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run ETL Pipeline
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+        run: |
+          python -m src.scrapers.scraper_runner
+```
+
+- Then we pushed this to git hub after commit.
+
+- Now in the repo in github we went to settings -> secrets and variables -> actions. There we added the github secrets which was database information which we were giving locally in the .env file.
+- After giving the 5 different secrets. We come back to the repo home and in Actions we click on the Techpulse_etl and run that file. This code demonstrates that the file will run for every 6 hours which means 4 times a day. 
+- Now our fully automated ETL pipeline is up and running which is fetching the articles and storing them autonomously.
+
+### Phase IV - Data Analytics:
+
+- Now that the data is in a cloud database we can directly fetch it using a connection to the database.
+- For that the Mysql drivers are to be installed and i installed using the link
+[MySQL Connector ODBC driver Link](https://dev.mysql.com/downloads/connector/odbc/?utm_source=chatgpt.com) and installed the 64-bit driver for our purpose.
+
+- To verify installation open the ODBC data sources 64 bit and click on drivers tab. You should see the drivers listed in the list.
+![alt text](capture_20260711134621460.bmp)
+- Then we will create an ODBC DSN
+1. In ODBC data source administrator, click the SYSTEM DSN tab and click on ADD.
+2. Click on MySQL ODBD 9.7 Unicode Driver
+3. Finish
+4. Then fill the details in TiDB details in the entries:
+![alt text](capture_20260711134900693.bmp) 
+5. Now click on test connection and click on finish.
+6. Open WPS then click on get Data.
+7. Then in the pop click on ODBS DSN and click on the added DSN. Then import the table from the database.
+
+
+
